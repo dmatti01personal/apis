@@ -1,15 +1,16 @@
-name: Sync Discovered API with ApiConnect
+name: Sync Discovered API with APIConnect
 
 on: [pull_request, workflow_dispatch, push]
 
 env:
   API_HOST: us-east-b.apiconnect.automation.ibm.com
+  PLATFORM_API_PREFIX: platform-api
   PROVIDER_ORG: prod599884
   API_FILES: petstore.json
 
 jobs:
   check_changes_job:
-    runs-on: 'ubuntu-20.04'
+    runs-on: 'ubuntu-latest'
     # Declare outputs for next jobs
     outputs:
       action_changed: ${{ steps.check_workflow_changed.outputs.action_updates }}
@@ -17,7 +18,7 @@ jobs:
       apifiles_env: ${{ steps.changed_filename.outputs.apifiles_env }}
       folder_changed: ${{ steps.check_apifolders_changed.outputs.folder_updates }}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 2
     - name: Check Workflow changed
@@ -38,11 +39,12 @@ jobs:
     needs: [ check_changes_job ]
     if: ${{ (contains(needs.check_changes_job.outputs.apifiles_env,needs.check_changes_job.outputs.changed_filename)) || (needs.check_changes_job.outputs.action_changed) || (needs.check_changes_job.outputs.folder_changed) }}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: ibm-apiconnect/apic-discovery-action@main
       id: discover-apis
       with:
         api_host: ${{ env.API_HOST }}
+        platform_api_prefix: ${{ env.PLATFORM_API_PREFIX }}
         provider_org: ${{ env.PROVIDER_ORG }}
         api_key: ${{ secrets.apicApikey }}
         if: env.API_FILES
