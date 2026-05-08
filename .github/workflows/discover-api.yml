@@ -3,8 +3,8 @@ name: Sync Discovered API with ApiConnect
 on: [pull_request, workflow_dispatch, push]
 
 env:
-  API_HOST: d-x07.apiconnect.dev.automation.ibm.com
-  PROVIDER_ORG: denis
+  API_HOST: us-east-b.apiconnect.automation.ibm.com
+  PROVIDER_ORG: prod599884
   API_FILES: petstore.json
 
 jobs:
